@@ -10,6 +10,7 @@
 
 <script>
 import Eltable from '../src/index';
+import { option, data } from './mock';
 // import Doc from './doc';
 
 export default {
@@ -20,24 +21,8 @@ export default {
 
   data() {
     return {
-      option: {
-        column: [
-          {
-            label: '姓名',
-            prop: 'name'
-          },
-          {
-            label: '年龄',
-            prop: 'age'
-          }
-        ]
-      },
-      data: [
-        {
-          name: '2333',
-          age: 23
-        }
-      ]
+      option,
+      data
     };
   }
 };
