@@ -24,6 +24,7 @@
     "@babel/preset-env": "^7.4.2",
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.1",
+    "dreamjs": "^0.2.0",
     "eslint": "^5.15.3",
     "eslint-loader": "^2.0.0",
     "eslint-plugin-vue": "^5.2.2",
