@@ -3,9 +3,16 @@
     <el-card :class="b('box')">
       <!-- 表格主体 -->
       <el-table 
+        ref="table"
         :data="list"
         :height="tableOption.height"
         :max-height="tableOption.maxHeight"
+        :border="tableOption.border"
+        :stripe="tableOption.stripe"
+        :row-class-name="rowClassName"
+        :highlight-current-row="tableOption.highlightCurrentRow"
+        @selection-change="selectionChange"
+        @sort-change="sortChange"
       >
         <!-- 暂无数据提醒 -->
         <template slot="empty">
@@ -19,11 +26,19 @@
             @click="refreshChange"
           >暂无数据，点击刷新</span>
         </template>
+        <!-- 多选框 -->
         <el-table-column
+          v-if="tableOption.selection"
+          type="selection"
+          width="50"
+          fixed="left"
+          align="center"
+        />
+        <!-- 表格数据列 -->
+        <column 
           v-for="(column, index) in columnOption"
           :key="index"
-          :label="column.label"
-          :prop="column.prop"
+          :column-option="column"
         />
       </el-table>
       <!-- 分页 -->
@@ -44,9 +59,14 @@
 
 <script>
 import bem from './mixins/bem';
+import Column from './components/column';
 
 export default {
   name: 'Eltable',
+
+  components: {
+    Column
+  },
 
   mixins: [bem],
 
@@ -75,6 +95,12 @@ export default {
       default() {
         return {};
       }
+    },
+
+    // 为 Table 中的某一行添加 class
+    rowClassName: {
+      type: Function,
+      default: null
     }
   },
 
@@ -88,7 +114,8 @@ export default {
         currentPage: 1, // 当前页码
         pageSize: 10, // 当前页数据量
         pageSizes: [10, 20, 30, 40, 50, 100]
-      }
+      },
+      tableSelect: []
     };
   },
 
@@ -169,11 +196,33 @@ export default {
     // 页码回调
     currentChange(val) {
       this.$emit('on-load', this.defaultPage);
-      this.$emit('current-change', val);
+      this.$emit('current-change', val); },
+   
+    refreshChange() {
+      this.$emit('refresh-change', this.defaultPage);
     },
 
-    refreshChange() {
-      this.$emit('refresh-change');
+    // 多选框回调
+    selectionChange(val) {
+      this.tableSelect = val;
+      this.$emit('selection-change', this.tableSelect);
+    },
+
+    // 排序回调
+    sortChange(val) {
+      this.$emit('sort-change', val);
+    },
+
+    clearSelection() {
+      this.$refs.table.clearSelection();
+    },
+
+    toggleRowSelection(row, selected) {
+      this.$refs.table.toggleRowSelection(row, selected);
+    },
+
+    toggleAllSelection() {
+      this.$refs.table.toggleAllSelection();
     }
   }
 };
