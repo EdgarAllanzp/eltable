@@ -2,6 +2,7 @@ import dream from 'dreamjs';
 
 const option = {
   emptyText: '自定义暂无数据提示语',
+  height: 500,
   column: [
     {
       label: '姓名',
@@ -33,12 +34,6 @@ const option = {
     }
   ]
 };
-
-dream.customType('pi', function () {
-  return Math.PI;
-});
-
-dream.customType('hello', /hello+ (world|to you)/);
 
 const data = dream
   .schema({

@@ -2,7 +2,11 @@
   <div :class="b()">
     <el-card :class="b('box')">
       <!-- 表格主体 -->
-      <el-table :data="list">
+      <el-table 
+        :data="list"
+        :height="tableOption.height"
+        :max-height="tableOption.maxHeight"
+      >
         <!-- 暂无数据提醒 -->
         <template slot="empty">
           <slot 
@@ -76,6 +80,7 @@ export default {
 
   data() {
     return {
+      clientHeight: document.documentElement.clientHeight,
       list: [],
       tableOption: {},
       defaultPage: {
