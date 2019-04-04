@@ -12,17 +12,18 @@ const option = {
     {
       label: 'ID',
       prop: 'id',
-      width: 120,
     },
     {
       label: 'Name',
       prop: 'name',
       children: [
         {
+          width: 200,
           label: 'Firstname',
           prop: 'first'
         },
         {
+          width: 200,
           label: 'Lastname',
           prop: 'last'
         }
@@ -31,28 +32,43 @@ const option = {
     {
       label: 'Gender',
       prop: 'gender',
-      width: 120
+      width: 200,
+      filters: [
+        {
+          text: 'Male',
+          value: 'male'
+        },
+        {
+          text: 'Female',
+          value: 'female'
+        }
+      ],
+      filterMethod: (value, row, column) => {
+        return row.gender.toLowerCase() === value;
+      }
     },
     {
       label: 'Company',
       prop: 'company',
-      width: 120
+      width: 200
     },
     {
       label: 'City',
       prop: 'city',
-      width: 120
+      width: 200
     },
     {
       label: 'Age',
       prop: 'age',
-      width: 120,
+      width: 200,
       sortable: true
     },
     {
       label: 'Birthday',
       prop: 'birthday',
-      width: 120
+      width: 200,
+      format: 'yyyy-MM-dd',
+      type: 'date'
     },
     {
       label: 'Email',

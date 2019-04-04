@@ -1,18 +1,27 @@
 <template>
   <div class="app-container">
-    <!-- <doc /> -->
     <eltable
       :data="data"
       :option="option"
       :page="page"
       :row-class-name="tableRowClassName"
+      :header-cell-class-name="headerCellClassName"
       @size-change="sizeChange"
       @current-change="currentChange"
       @on-load="onLoad"
       @refresh-change="refreshChange"
       @selection-change="selectionChange"
       @sort-change="sortChange"
-    />
+    >
+      <template #city="scope">
+        <a 
+          target="_blank" 
+          :href="`https://www.google.com/search?q=${scope.row.city.toLowerCase()}`"
+        >
+          {{ scope.row.city }}
+        </a>
+      </template>
+    </eltable>
   </div>
 </template>
 
@@ -79,6 +88,10 @@ export default {
       return '';
     },
 
+    headerCellClassName() {
+      return 'table-header-ellipsis';
+    },
+
     selectionChange(list) {
       this.$message.success('选中的数据：' + JSON.stringify(list));
     },
@@ -98,6 +111,11 @@ export default {
 
   .success-row {
     background: #f0f9eb;
+  }
+
+  .table-header-ellipsis > .cell {
+    white-space: nowrap;
+    min-width: 50px;
   }
 }
 </style>

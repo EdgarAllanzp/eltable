@@ -9,10 +9,14 @@
         :max-height="tableOption.maxHeight"
         :border="tableOption.border"
         :stripe="tableOption.stripe"
-        :row-class-name="rowClassName"
+        :default-sort="tableOption.defaultSort"
         :highlight-current-row="tableOption.highlightCurrentRow"
+        :row-class-name="rowClassName"
+        :header-cell-class-name="headerCellClassName"
         @selection-change="selectionChange"
         @sort-change="sortChange"
+        @cell-mouse-enter="cellMouseEnter"
+        @cell-mouse-leave="cellMouseLeave"
       >
         <!-- 暂无数据提醒 -->
         <template slot="empty">
@@ -39,7 +43,14 @@
           v-for="(column, index) in columnOption"
           :key="index"
           :column-option="column"
-        />
+        >
+          <template #[column.prop]="scope">
+            <slot 
+              :name="column.prop"
+              :row="scope.row"
+            />
+          </template>
+        </column>
       </el-table>
       <!-- 分页 -->
       <div :class="b('pagination')">
@@ -99,6 +110,11 @@ export default {
 
     // 为 Table 中的某一行添加 class
     rowClassName: {
+      type: Function,
+      default: null
+    },
+
+    headerCellClassName: {
       type: Function,
       default: null
     }
@@ -223,6 +239,18 @@ export default {
 
     toggleAllSelection() {
       this.$refs.table.toggleAllSelection();
+    },
+
+    handleHeaderCellMouseEnter($event) {
+      console.log($event);
+    },
+
+    cellMouseEnter(row, column, cell, event) {
+      this.$emit('cell-mouse-enter', row, column, cell, event);
+    },
+
+    cellMouseLeave(row, column, cell, event) {
+      this.$emit('cell-mouse-leave', row, column, cell, event);
     }
   }
 };
