@@ -6,10 +6,7 @@ const {
 const md = require('./config');
 
 module.exports = function(source) {
-  console.log(source);
   const content = md.render(source);
-  console.log('=====');
-  console.log(content);
 
   const startTag = '<!--element-demo:';
   const startTagLen = startTag.length;
@@ -41,9 +38,6 @@ module.exports = function(source) {
     commentEnd = content.indexOf(endTag, commentStart + startTagLen);
   }
 
-  console.log('11111111111');
-  console.log(output);
-
   // 仅允许在 demo 不存在时，才可以在 Markdown 中写 script 标签
   // todo: 优化这段逻辑
   let pageScript = '';
@@ -62,16 +56,6 @@ module.exports = function(source) {
   }
 
   output.push(content.slice(start));
-  console.log('fffffff');
-  let sss = `
-    <template>
-      <section class="content element-doc">
-        ${output.join('')}
-      </section>
-    </template>
-    ${pageScript}
-  `;
-  console.log(sss);
   return `
     <template>
       <section class="content element-doc">

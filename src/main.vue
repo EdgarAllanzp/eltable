@@ -146,10 +146,6 @@ export default {
       this.dataInit();
     },
 
-    columnOption() {
-      this.columnInit();
-    },
-
     option: {
       handler() {
         this.init();
@@ -181,10 +177,6 @@ export default {
 
     dataInit() {
       this.list = [...this.data];
-    },
-
-    columnInit() {
-      console.log('column init');
     },
 
     pageInit() {

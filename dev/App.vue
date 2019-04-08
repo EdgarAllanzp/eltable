@@ -1,6 +1,9 @@
 <template>
-  <div class="app-container">
-    <eltable
+  <div class="app-container page-container">
+    <el-card>
+      <doc />
+    </el-card>
+    <!-- <eltable
       :data="data"
       :option="option"
       :page="page"
@@ -21,18 +24,18 @@
           {{ scope.row.city }}
         </a>
       </template>
-    </eltable>
+    </eltable> -->
   </div>
 </template>
 
 <script>
 import Eltable from '../src/index';
 import { option, getData } from './mock';
-// import Doc from './doc';
+import Doc from './doc';
 
 export default {
   components: {
-    // Doc,
+    Doc,
     Eltable
   },
 
