@@ -60,7 +60,7 @@
         </column>
       </el-table>
       <!-- 分页 -->
-      <div :class="b('pagination')">
+      <div :class="b('pagination')" v-if="page">
         <el-pagination 
           :current-page.sync="defaultPage.currentPage"
           :page-size="defaultPage.pageSize"
@@ -106,7 +106,7 @@ export default {
     },
 
     page: {
-      type: Object,
+      type: [Object, Boolean],
       default() {
         return {};
       }
@@ -125,13 +125,12 @@ export default {
 
   data() {
     return {
-      clientHeight: document.documentElement.clientHeight,
       list: [],
       tableOption: {},
       defaultPage: {
-        total: -1, // 数据总数
-        currentPage: -1, // 当前页码
-        pageSize: -1, // 当前页数据量
+        total: -1,
+        currentPage: -1,
+        pageSize: -1,
         pageSizes: []
       },
       tableSelect: []
@@ -166,11 +165,8 @@ export default {
 
   created() {
     this.init();
-    // 初始化数据
     this.dataInit();
-    // 初始化分页
     this.pageInit();
-    this.$emit('on-load', this.defaultPage);
   },
 
   methods: {
@@ -197,13 +193,11 @@ export default {
     sizeChange(val) {
       this.defaultPage.currentPage = 1;
       this.defaultPage.pageSize = val;
-      this.$emit('on-load', this.defaultPage);
-      this.$emit('size-change', val);
+      this.$emit('size-change', this.defaultPage);
     },
 
     pageChange(val) {
-      this.$emit('on-load', this.defaultPage);
-      this.$emit('page-change', val); },
+      this.$emit('page-change', this.defaultPage); },
    
     refreshChange() {
       this.$emit('refresh-change', this.defaultPage);
@@ -268,3 +262,21 @@ export default {
   }
 };
 </script>
+
+<style lang="scss">
+.eltable {
+
+  &__pagination {
+    position: relative;
+    height: 25px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+    padding: 10px 20px;
+
+    .el-pagination {
+        position: absolute;
+        right: 0;
+    }
+  }
+}
+</style>

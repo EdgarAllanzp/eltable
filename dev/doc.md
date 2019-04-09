@@ -1182,12 +1182,98 @@
 ```
 :::
 
+### 分页
+
+默认集成 `el-pagination` 分页组件。
+
+:::demo 使用 `page` 属性自定义分页信息。
+
+```html
+  <template>
+    <eltable 
+      :data="tableData" 
+      :page="page"
+      :option="tableOption"
+      @size-change="sizeChange"
+      @page-change="pageChange"
+    />
+  </template>
+
+  <script>
+    export default {
+      data() {
+        return {
+          page: {
+            currentPage: 1,
+            pageSize: 10,
+            total: 0
+          },
+          tableOption: {
+            height: 300,
+            column: [
+              {
+                label: 'No.',
+                prop: 'id'
+              },
+              {
+                label: '日期',
+                prop: 'date',
+                width: '300px'
+              },
+              {
+                label: '姓名',
+                prop: 'name',
+                width: 250
+              },
+              {
+                label: '地址',
+                prop: 'address'
+              }
+            ]
+          },
+          tableData: [],
+          data: [...Array(100)].map((item, index) => {
+            return {
+              id: index + 1,
+              date: '2016-05-01',
+              name: '王小虎',
+              address: '上海市普陀区金沙江路 1516 弄'
+            };
+          })
+        }
+      },
+
+      methods: {
+        getList(offset = 0, limit = 10) {
+          const filteredData = this.data.slice(offset, offset + limit);
+          this.tableData = filteredData;
+          this.page.total = this.data.length;
+        },
+
+        sizeChange({ currentPage, pageSize, pageSizes, total }) {
+          this.getList((currentPage - 1) * pageSize, pageSize);
+        },
+
+        pageChange({ currentPage, pageSize, pageSizes, total }) {
+          this.getList((currentPage - 1) * pageSize, pageSize);
+        }
+      },
+
+      created() {
+        this.getList();
+      }
+    }
+  </script>
+```
+:::
+
 ### Table Attributes
 
 | 参数 | 说明 | 类型 | 可选值 | 默认值 |
 |-----|------|-----|-------|-------|
 | data | 表格数据 | Array | - | - |
 | option | 表格配置项，配置详情见下表 | Object | - | - |
+| page | 表格分页项，配置详情见下表 | Object / Boolean | Page / false | - |
 | row-class-name | 行的 className 的回调方法，也可以使用字符串为所有行设置一个固定的 className。 | Function({row, rowIndex}) / String | - | '' |
 
 ### Table Events
@@ -1200,6 +1286,8 @@
 | select-change | 当选择项发生变化时会触发该事件 | selection |
 | sort-change | 当表格的排序条件发生变化的时候会触发该事件 | { column, prop, order } |
 | filter-change | 当表格的筛选条件发生变化的时候会触发该事件，参数的值是一个对象，对象的 key 是 column 的 columnKey，对应的 value 为用户选择的筛选条件的数组 | filters |
+| size-change | pageSize 改变时会触发 | { currentPage, pageSize, pageSizes, total } |
+| page-change | currentPage 改变时会触发 | { currentPage, pageSize, pageSizes, total } |
 
 ### Table Methods
 
@@ -1217,6 +1305,15 @@
 | name | 说明 | 参数 |
 |------|-----|------|
 | 列的 prop | 自定义列的内容 | { row } |
+
+### Page Attributes
+
+| 参数 | 说明 | 类型 | 可选值 | 默认值 |
+|-----|------|-----|-------|-------|
+| total | 数据总数量 | Number | - | 传入的表格组件的数据数量 |
+| currentPage | 当前页码 | Number | - | 1 |
+| pageSize | 每页条数 | Number | - | 10 |
+| pageSizes | 每页可选数据量 | Array | - | [10, 20, 50, 100] |
 
 ### Option Attributes
 

@@ -109,9 +109,9 @@ async function getData(
   sort = []
 ) {
   await timeout(200);
-  const filtedData = data.slice(offset, offset + limit);
+  const filteredData = data.slice(offset, offset + limit);
   return {
-    data: filtedData,
+    data: filteredData,
     total: data.length
   };
 }
