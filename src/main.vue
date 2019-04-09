@@ -13,10 +13,14 @@
         :highlight-current-row="tableOption.highlightCurrentRow"
         :row-class-name="rowClassName"
         :header-cell-class-name="headerCellClassName"
+        @select="select"
+        @select-all="selectAll"
         @selection-change="selectionChange"
         @sort-change="sortChange"
+        @filter-change="filterChange"
         @cell-mouse-enter="cellMouseEnter"
         @cell-mouse-leave="cellMouseLeave"
+        @header-dragend="headerDragend"
       >
         <!-- 暂无数据提醒 -->
         <template slot="empty">
@@ -42,12 +46,15 @@
         <column 
           v-for="(column, index) in columnOption"
           :key="index"
+          :index="index"
           :column-option="column"
         >
           <template #[column.prop]="scope">
             <slot 
               :name="column.prop"
               :row="scope.row"
+              :column="scope.column"
+              :$index="scope.$index"
             />
           </template>
         </column>
@@ -61,7 +68,7 @@
           layout="total, sizes, prev, pager, next, jumper" 
           :total="defaultPage.total"
           @size-change="sizeChange"
-          @current-change="currentChange"
+          @current-change="pageChange"
         />
       </div>
     </el-card>
@@ -82,7 +89,6 @@ export default {
   mixins: [bem],
 
   props: {
-    // 表格数据
     data: {
       type: Array,
       required: true,
@@ -91,7 +97,6 @@ export default {
       }
     },
 
-    // 表格配置项
     option: {
       type: Object,
       required: true,
@@ -100,7 +105,6 @@ export default {
       }
     },
 
-    // 分页
     page: {
       type: Object,
       default() {
@@ -108,10 +112,9 @@ export default {
       }
     },
 
-    // 为 Table 中的某一行添加 class
     rowClassName: {
-      type: Function,
-      default: null
+      type: [Function, String],
+      default: ''
     },
 
     headerCellClassName: {
@@ -126,10 +129,10 @@ export default {
       list: [],
       tableOption: {},
       defaultPage: {
-        total: 0, // 数据总数
-        currentPage: 1, // 当前页码
-        pageSize: 10, // 当前页数据量
-        pageSizes: [10, 20, 30, 40, 50, 100]
+        total: -1, // 数据总数
+        currentPage: -1, // 当前页码
+        pageSize: -1, // 当前页数据量
+        pageSizes: []
       },
       tableSelect: []
     };
@@ -180,20 +183,17 @@ export default {
     },
 
     pageInit() {
-      this.defaultPage.total = this.page.total || 0;
+      this.defaultPage.total = this.page.total || this.list.length || 0;
       this.defaultPage.currentPage = this.page.currentPage || 1;
       this.defaultPage.pageSize = this.page.pageSize || 10;
       this.defaultPage.pageSizes = this.page.pageSizes || [
         10,
         20,
-        30,
-        40,
         50,
         100
       ];
     },
 
-    // 页大小回调
     sizeChange(val) {
       this.defaultPage.currentPage = 1;
       this.defaultPage.pageSize = val;
@@ -201,22 +201,27 @@ export default {
       this.$emit('size-change', val);
     },
 
-    // 页码回调
-    currentChange(val) {
+    pageChange(val) {
       this.$emit('on-load', this.defaultPage);
-      this.$emit('current-change', val); },
+      this.$emit('page-change', val); },
    
     refreshChange() {
       this.$emit('refresh-change', this.defaultPage);
     },
 
-    // 多选框回调
-    selectionChange(val) {
-      this.tableSelect = val;
+    selectionChange(selection) {
+      this.tableSelect = selection;
       this.$emit('selection-change', this.tableSelect);
     },
 
-    // 排序回调
+    select(selection, row) {
+      this.$emit('select', selection, row);
+    },
+
+    selectAll(selection) {
+      this.$emit('select-all', selection);
+    },
+
     sortChange(val) {
       this.$emit('sort-change', val);
     },
@@ -233,8 +238,20 @@ export default {
       this.$refs.table.toggleAllSelection();
     },
 
-    handleHeaderCellMouseEnter($event) {
-      console.log($event);
+    clearSort() {
+      this.$refs.table.clearSort();
+    },
+
+    sort(prop, order) {
+      this.$refs.table.sort(prop, order);
+    },
+
+    clearFilter(columnKey) {
+      this.$refs.table.clearFilter(columnKey);
+    },
+
+    filterChange(filters) {
+      this.$emit('filter-change', filters);
     },
 
     cellMouseEnter(row, column, cell, event) {
@@ -243,6 +260,10 @@ export default {
 
     cellMouseLeave(row, column, cell, event) {
       this.$emit('cell-mouse-leave', row, column, cell, event);
+    },
+
+    headerDragend(newWidth, oldWidth, column, event) {
+      this.$emit('header-dragend', newWidth, oldWidth, column, event);
     }
   }
 };

@@ -10,7 +10,7 @@
       :row-class-name="tableRowClassName"
       :header-cell-class-name="headerCellClassName"
       @size-change="sizeChange"
-      @current-change="currentChange"
+      @page-change="pageChange"
       @on-load="onLoad"
       @refresh-change="refreshChange"
       @selection-change="selectionChange"
@@ -74,8 +74,8 @@ export default {
       console.log('size-change: ' + val);
     },
 
-    currentChange(val) {
-      console.log('current-change: ' + val);
+    pageChange(val) {
+      console.log('page-change: ' + val);
     },
 
     refreshChange(page) {
@@ -108,14 +108,6 @@ export default {
 
 <style lang="scss">
 .eltable {
-  .warning-row {
-    background: oldlace;
-  }
-
-  .success-row {
-    background: #f0f9eb;
-  }
-
   .table-header-ellipsis > .cell {
     white-space: nowrap;
     min-width: 50px;

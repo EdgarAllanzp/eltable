@@ -1,5 +1,4 @@
 import dream from 'dreamjs';
-import { resolve } from 'uri-js';
 
 const option = {
   emptyText: '自定义暂无数据提示语',
