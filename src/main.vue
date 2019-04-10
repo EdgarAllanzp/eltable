@@ -1,16 +1,51 @@
 <template>
   <div :class="b()">
     <el-card :class="b('box')">
+      <!-- 表格功能列 -->
+      <div :class="b('menu')">
+        <div :class="b('left')"></div>
+        <div :class="b('right')">
+          <el-input
+            placeholder="搜索列表"
+            size="small"
+            v-model="searchTerm"
+          >
+            <i slot="prefix" class="el-input__icon el-icon-search"></i>
+          </el-input>
+          <el-tooltip content="动态列" placement="top">
+            <el-button 
+              icon="el-icon-menu" 
+              size="small"
+              circle
+              @click="initColumnBox"
+            />
+          </el-tooltip>
+          <el-dropdown trigger="click" size="small">
+            <el-tooltip content="过滤器设置" placement="top">
+              <el-button 
+                icon="el-icon-setting" 
+                size="small"
+                circle
+              />
+            </el-tooltip>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item>新建</el-dropdown-item>
+              <el-dropdown-item>编辑</el-dropdown-item>
+              <el-dropdown-item>删除</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
+      </div>
       <!-- 表格主体 -->
       <el-table 
         ref="table"
-        :data="list"
-        :height="tableOption.height"
-        :max-height="tableOption.maxHeight"
-        :border="tableOption.border"
-        :stripe="tableOption.stripe"
-        :default-sort="tableOption.defaultSort"
-        :highlight-current-row="tableOption.highlightCurrentRow"
+        :data="data"
+        :height="option.height"
+        :max-height="option.maxHeight"
+        :border="option.border"
+        :stripe="option.stripe"
+        :default-sort="option.defaultSort"
+        :highlight-current-row="option.highlightCurrentRow"
         :row-class-name="rowClassName"
         :header-cell-class-name="headerCellClassName"
         @select="select"
@@ -36,7 +71,7 @@
         </template>
         <!-- 多选框 -->
         <el-table-column
-          v-if="tableOption.selection"
+          v-if="option.selection"
           type="selection"
           width="50"
           fixed="left"
@@ -44,7 +79,7 @@
         />
         <!-- 表格数据列 -->
         <column 
-          v-for="(column, index) in columnOption"
+          v-for="(column, index) in columns"
           :key="index"
           :index="index"
           :column-option="column"
@@ -72,12 +107,28 @@
         />
       </div>
     </el-card>
+
+    <!-- 动态列 -->
+    <el-dialog 
+      title="动态列设置"
+      :visible.sync="columnBox">
+      <el-transfer 
+        v-model="visibleColumnKeys"
+        :titles="['隐藏的列', '显示的列']"
+        :data="flattenColumnList"
+      />
+      <span slot="footer">
+        <el-button>取消</el-button>
+        <el-button type="primary">确定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import bem from './mixins/bem';
 import Column from './components/column';
+import { flattenArray } from './utils/utils';
 
 export default {
   name: 'Eltable',
@@ -97,9 +148,16 @@ export default {
       }
     },
 
+    columns: {
+      type: Array,
+      required: true,
+      default() {
+        return [];
+      }
+    },
+
     option: {
       type: Object,
-      required: true,
       default() {
         return {};
       }
@@ -125,32 +183,27 @@ export default {
 
   data() {
     return {
-      list: [],
-      tableOption: {},
       defaultPage: {
         total: -1,
         currentPage: -1,
         pageSize: -1,
         pageSizes: []
       },
-      tableSelect: []
+      tableSelect: [],
+      searchTerm: '',
+      columnBox: false,
+      flattenColumnList: [],
+      visibleColumnKeys: []
     };
   },
 
   computed: {
-    columnOption() {
-      return this.tableOption.column || [];
-    }
   },
 
   watch: {
-    data() {
-      this.dataInit();
-    },
-
-    option: {
+    columns: {
       handler() {
-        this.init();
+        this.columnInit();
       },
       deep: true
     },
@@ -164,22 +217,24 @@ export default {
   },
 
   created() {
-    this.init();
-    this.dataInit();
+    this.columnInit();
     this.pageInit();
   },
 
   methods: {
-    init() {
-      this.tableOption = this.option;
-    },
-
-    dataInit() {
-      this.list = [...this.data];
+    columnInit() {
+      this.flattenColumnList = flattenArray(this.columns, 'children')
+        .map(column => {
+          return {
+            key: column.prop,
+            label: column.label
+          };
+        });
+      this.visibleColumnKeys = this.flattenColumnList.map(column => column.key);
     },
 
     pageInit() {
-      this.defaultPage.total = this.page.total || this.list.length || 0;
+      this.defaultPage.total = this.page.total || this.data.length || 0;
       this.defaultPage.currentPage = this.page.currentPage || 1;
       this.defaultPage.pageSize = this.page.pageSize || 10;
       this.defaultPage.pageSizes = this.page.pageSizes || [
@@ -258,6 +313,10 @@ export default {
 
     headerDragend(newWidth, oldWidth, column, event) {
       this.$emit('header-dragend', newWidth, oldWidth, column, event);
+    },
+
+    initColumnBox() {
+      this.columnBox = true;
     }
   }
 };
@@ -265,6 +324,39 @@ export default {
 
 <style lang="scss">
 .eltable {
+
+  &__menu {
+    position: relative;
+    width: 100%;
+    min-height: 40px;
+    height: auto;
+    overflow: hidden;
+    margin-bottom: 12px;
+  }
+
+  &__left,
+  &__right {
+    position: absolute;
+    height: auto;
+    overflow: hidden;
+  }
+
+  &__left {
+    left: 0;
+  }
+
+  &__right {
+    right: 0;
+
+    .el-input {
+      width: 200px;
+      margin-right: 10px;
+    }
+
+    .el-button + .el-dropdown {
+      margin-left: 10px;
+    }
+  }
 
   &__pagination {
     position: relative;
