@@ -10,31 +10,29 @@
 
 ```html
   <template>
-    <eltable :data="tableData" :option="tableOption"></eltable>
+    <eltable :data="tableData" :columns="columns"></eltable>
   </template>
 
   <script>
     export default {
       data() {
         return {
-          tableOption: {
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: '300px'
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 250
-              },
-              {
-                label: '地址',
-                prop: 'address'
-              }
-            ]
-          },
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px'
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 250
+            },
+            {
+              label: '地址',
+              prop: 'address'
+            }
+          ],
           tableData: [{
             date: '2016-05-02',
             name: '王小虎',
@@ -67,7 +65,7 @@
 
 ```html
   <template>
-    <eltable :data="tableData" :option="tableOption"></eltable>
+    <eltable :data="tableData" :columns="columns" :option="tableOption"></eltable>
   </template>
 
   <script>
@@ -75,24 +73,24 @@
       data() {
         return {
           tableOption: {
-            stripe: true,
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: '300px'
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 250
-              },
-              {
-                label: '地址',
-                prop: 'address'
-              }
-            ]
+            stripe: true
           },
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px'
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 250
+            },
+            {
+              label: '地址',
+              prop: 'address'
+            }
+          ],
           tableData: [{
             date: '2016-05-02',
             name: '王小虎',
@@ -127,6 +125,7 @@
   <template>
     <eltable 
       :data="tableData" 
+      :columns="columns"
       :option="tableOption"
       @header-dragend="headerDragend"
     />
@@ -137,24 +136,24 @@
       data() {
         return {
           tableOption: {
-            border: true,
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: '300px'
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 250
-              },
-              {
-                label: '地址',
-                prop: 'address'
-              }
-            ]
+            border: true
           },
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px'
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 250
+            },
+            {
+              label: '地址',
+              prop: 'address'
+            }
+          ],
           tableData: [{
             date: '2016-05-02',
             name: '王小虎',
@@ -195,7 +194,7 @@
   <template>
     <eltable 
       :data="tableData" 
-      :option="tableOption"
+      :columns="columns"
       :row-class-name="tableRowClassName"
     />
   </template>
@@ -214,24 +213,22 @@
     export default {
       data() {
         return {
-          tableOption: {
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: '300px'
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 250
-              },
-              {
-                label: '地址',
-                prop: 'address'
-              }
-            ]
-          },
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px'
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 250
+            },
+            {
+              label: '地址',
+              prop: 'address'
+            }
+          ],
           tableData: [{
             date: '2016-05-02',
             name: '王小虎',
@@ -277,6 +274,7 @@
   <template>
     <eltable 
       :data="tableData" 
+      :columns="columns"
       :option="tableOption"
     />
   </template>
@@ -288,23 +286,23 @@
           tableOption: {
             height: 250,
             border: true,
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: '300px'
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 250
-              },
-              {
-                label: '地址',
-                prop: 'address'
-              }
-            ]
           },
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px'
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 250
+            },
+            {
+              label: '地址',
+              prop: 'address'
+            }
+          ],
           tableData: [
             {
               date: '2016-05-02',
@@ -374,6 +372,7 @@
   <template>
     <eltable 
       :data="tableData" 
+      :columns="columns"
       :option="tableOption"
     >
       <template #operation="scope">
@@ -388,47 +387,47 @@
       data() {
         return {
           tableOption: {
-            border: true,
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: 250,
-                fixed: true
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 220
-              },
-              {
-                label: '省份',
-                prop: 'province',
-                width: 220
-              },
-              {
-                label: '市区',
-                prop: 'city',
-                width: 220
-              },
-              {
-                label: '地址',
-                prop: 'address',
-                width: 400
-              },
-              {
-                label: '邮编',
-                prop: 'zip',
-                width: 220
-              },
-              {
-                label: '操作',
-                prop: 'operation',
-                width: 200,
-                fixed: 'right'
-              }
-            ]
+            border: true
           },
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: 250,
+              fixed: true
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 220
+            },
+            {
+              label: '省份',
+              prop: 'province',
+              width: 220
+            },
+            {
+              label: '市区',
+              prop: 'city',
+              width: 220
+            },
+            {
+              label: '地址',
+              prop: 'address',
+              width: 400
+            },
+            {
+              label: '邮编',
+              prop: 'zip',
+              width: 220
+            },
+            {
+              label: '操作',
+              prop: 'operation',
+              width: 200,
+              fixed: 'right'
+            }
+          ],
           tableData: [{
             date: '2016-05-02',
             name: '王小虎',
@@ -481,6 +480,7 @@
   <template>
     <eltable 
       :data="tableData" 
+      :columns="columns"
       :option="tableOption"
     >
       <template #operation="scope">
@@ -496,47 +496,47 @@
         return {
           tableOption: {
             height: 250,
-            border: true,
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: 250,
-                fixed: true
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 220
-              },
-              {
-                label: '省份',
-                prop: 'province',
-                width: 220
-              },
-              {
-                label: '市区',
-                prop: 'city',
-                width: 220
-              },
-              {
-                label: '地址',
-                prop: 'address',
-                width: 400
-              },
-              {
-                label: '邮编',
-                prop: 'zip',
-                width: 220
-              },
-              {
-                label: '操作',
-                prop: 'operation',
-                width: 200,
-                fixed: 'right'
-              }
-            ]
+            border: true
           },
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: 250,
+              fixed: true
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 220
+            },
+            {
+              label: '省份',
+              prop: 'province',
+              width: 220
+            },
+            {
+              label: '市区',
+              prop: 'city',
+              width: 220
+            },
+            {
+              label: '地址',
+              prop: 'address',
+              width: 400
+            },
+            {
+              label: '邮编',
+              prop: 'zip',
+              width: 220
+            },
+            {
+              label: '操作',
+              prop: 'operation',
+              width: 200,
+              fixed: 'right'
+            }
+          ],
           tableData: [{
             date: '2016-05-03',
             name: '王小虎',
@@ -610,6 +610,7 @@
   <template>
     <eltable 
       :data="tableData" 
+      :columns="columns"
       :option="tableOption"
     />
   </template>
@@ -620,24 +621,24 @@
         return {
           tableOption: {
             maxHeight: 250,
-            border: true,
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: '300px'
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 250
-              },
-              {
-                label: '地址',
-                prop: 'address'
-              }
-            ]
+            border: true
           },
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px'
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 250
+            },
+            {
+              label: '地址',
+              prop: 'address'
+            }
+          ],
           tableData: [
             {
               date: '2016-05-02',
@@ -705,52 +706,50 @@
 
 ```html
   <template>
-    <eltable :data="tableData" :option="tableOption"></eltable>
+    <eltable :data="tableData" :columns="columns"></eltable>
   </template>
 
   <script>
     export default {
       data() {
         return {
-          tableOption: {
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: 250
-              },
-              {
-                label: '配送信息',
-                children: [
-                  {
-                    label: '姓名',
-                    prop: 'name',
-                    width: 220
-                  },
-                  {
-                    label: '地址',
-                    children: [
-                      {
-                        label: '省份',
-                        prop: 'province',
-                        width: 220
-                      },
-                      {
-                        label: '市区',
-                        prop: 'city',
-                        width: 220
-                      },
-                      {
-                        label: '地址',
-                        prop: 'address',
-                        width: 400
-                      }
-                    ]
-                  }
-                ]
-              }
-            ]
-          },
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: 250
+            },
+            {
+              label: '配送信息',
+              children: [
+                {
+                  label: '姓名',
+                  prop: 'name',
+                  width: 220
+                },
+                {
+                  label: '地址',
+                  children: [
+                    {
+                      label: '省份',
+                      prop: 'province',
+                      width: 220
+                    },
+                    {
+                      label: '市区',
+                      prop: 'city',
+                      width: 220
+                    },
+                    {
+                      label: '地址',
+                      prop: 'address',
+                      width: 400
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
           tableData: [{
             date: '2016-05-03',
             name: '王小虎',
@@ -819,6 +818,7 @@
     <eltable 
       ref="multipleTable"
       :data="tableData" 
+      :columns="columns"
       :option="tableOption"
       @selection-change="selectionChange"
     />
@@ -833,24 +833,24 @@
       data() {
         return {
           tableOption: {
-            selection: true,
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: '300px'
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 250
-              },
-              {
-                label: '地址',
-                prop: 'address'
-              }
-            ]
+            selection: true
           },
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px'
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 250
+            },
+            {
+              label: '地址',
+              prop: 'address'
+            }
+          ],
           tableData: [{
             date: '2016-05-02',
             name: '王小虎',
@@ -901,6 +901,7 @@
   <template>
     <eltable 
       :data="tableData" 
+      :columns="columns"
       :option="tableOption" 
     />
   </template>
@@ -909,31 +910,31 @@
     export default {
       data() {
         return {
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px',
+              sortable: true
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 250
+            },
+            {
+              label: '地址',
+              prop: 'address',
+              formatter: (row, column, cellValue, index) => {
+                return row.address;
+              }
+            }
+          ],
           tableOption: {
             defaultSort: {
               prop: 'date',
               order: 'descending'
-            },
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: '300px',
-                sortable: true
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 250
-              },
-              {
-                label: '地址',
-                prop: 'address',
-                formatter: (row, column, cellValue, index) => {
-                  return row.address;
-                }
-              }
-            ]
+            }
           },
           tableData: [{
             date: '2016-05-02',
@@ -970,7 +971,7 @@
     <eltable 
       ref="filterTable"
       :data="tableData" 
-      :option="tableOption"
+      :columns="columns"
       @filter-change="filterChange"
     >
       <template #tag="scope">
@@ -992,65 +993,63 @@
     export default {
       data() {
         return {
-          tableOption: {
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: '300px',
-                sortable: true,
-                filters: [
-                  {
-                    text: '2016-05-01',
-                    value: '2016-05-01'
-                  },
-                  {
-                    text: '2016-05-02',
-                    value: '2016-05-02'
-                  },
-                  {
-                    text: '2016-05-03',
-                    value: '2016-05-03'
-                  },
-                  {
-                    text: '2016-05-04',
-                    value: '2016-05-04'
-                  }
-                ],
-                filterMethod: (value, row, column) => {
-                  const property = column['property'];
-                  return row[property] === value;
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px',
+              sortable: true,
+              filters: [
+                {
+                  text: '2016-05-01',
+                  value: '2016-05-01'
+                },
+                {
+                  text: '2016-05-02',
+                  value: '2016-05-02'
+                },
+                {
+                  text: '2016-05-03',
+                  value: '2016-05-03'
+                },
+                {
+                  text: '2016-05-04',
+                  value: '2016-05-04'
                 }
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 250
-              },
-              {
-                label: '地址',
-                prop: 'address'
-              },
-              {
-                label: '标签',
-                prop: 'tag',
-                width: 100,
-                filters: [
-                  {
-                    text: '家',
-                    value: '家'
-                  },
-                  {
-                    text: '公司',
-                    value: '公司'
-                  }
-                ],
-                filterMethod: (value, row) => {
-                  return row.tag === value;
-                }
+              ],
+              filterMethod: (value, row, column) => {
+                const property = column['property'];
+                return row[property] === value;
               }
-            ]
-          },
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 250
+            },
+            {
+              label: '地址',
+              prop: 'address'
+            },
+            {
+              label: '标签',
+              prop: 'tag',
+              width: 100,
+              filters: [
+                {
+                  text: '家',
+                  value: '家'
+                },
+                {
+                  text: '公司',
+                  value: '公司'
+                }
+              ],
+              filterMethod: (value, row) => {
+                return row.tag === value;
+              }
+            }
+          ],
           tableData: [{
             date: '2016-05-02',
             name: '王小虎',
@@ -1100,7 +1099,7 @@
 :::demo 通过 `Scoped slot` 可以获取到 row, column, $index 和 store（table 内部的状态管理）的数据，用法参考 demo。
 ```html
   <template>
-    <eltable :data="tableData" :option="tableOption">
+    <eltable :data="tableData" :columns="columns">
       <template #date="scope">
         <i class="el-icon-time"></i>
         <span style="margin-left: 10px">{{ scope.row.date }}</span>
@@ -1130,24 +1129,22 @@
     export default {
       data() {
         return {
-          tableOption: {
-            column: [
-              {
-                label: '日期',
-                prop: 'date',
-                width: '300px'
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 180
-              },
-              {
-                label: '操作',
-                prop: 'operation'
-              }
-            ]
-          },
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px'
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 180
+            },
+            {
+              label: '操作',
+              prop: 'operation'
+            }
+          ],
           tableData: [{
             date: '2016-05-02',
             name: '王小虎',
@@ -1192,6 +1189,7 @@
   <template>
     <eltable 
       :data="tableData" 
+      :columns="columns"
       :page="page"
       :option="tableOption"
       @size-change="sizeChange"
@@ -1208,28 +1206,28 @@
             pageSize: 10,
             total: 0
           },
+          columns: [
+            {
+              label: 'No.',
+              prop: 'id'
+            },
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px'
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 250
+            },
+            {
+              label: '地址',
+              prop: 'address'
+            }
+          ],
           tableOption: {
-            height: 300,
-            column: [
-              {
-                label: 'No.',
-                prop: 'id'
-              },
-              {
-                label: '日期',
-                prop: 'date',
-                width: '300px'
-              },
-              {
-                label: '姓名',
-                prop: 'name',
-                width: 250
-              },
-              {
-                label: '地址',
-                prop: 'address'
-              }
-            ]
+            height: 300
           },
           tableData: [],
           data: [...Array(100)].map((item, index) => {
@@ -1272,6 +1270,7 @@
 | 参数 | 说明 | 类型 | 可选值 | 默认值 |
 |-----|------|-----|-------|-------|
 | data | 表格数据 | Array | - | - |
+| columns | 列配置信息，配置详情见下表 | Array | - | - |
 | option | 表格配置项，配置详情见下表 | Object | - | - |
 | page | 表格分页项，配置详情见下表 | Object / Boolean | Page / false | - |
 | row-class-name | 行的 className 的回调方法，也可以使用字符串为所有行设置一个固定的 className。 | Function({row, rowIndex}) / String | - | '' |
@@ -1319,7 +1318,6 @@
 
 | 参数 | 说明 | 类型 | 可选值 | 默认值 |
 |-----|------|-----|-------|-------|
-| column | 列信息，详情见下表 | Array | - | [] |
 | stripe | 是否为斑马纹 table | Boolean | - | false |
 | border | 是否为带边框 table | Boolean | - | false |
 | height | Table 的高度，默认为自动高度。如果 height 为 number 类型，单位 px；如果 height 为 string 类型，则这个高度会设置为 Table 的 style.height 的值，Table 的高度会受控于外部样式 | String / Number | - | - |
