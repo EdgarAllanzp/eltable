@@ -10,7 +10,7 @@
 
 ```html
   <template>
-    <eltable :data="tableData" :columns="columns"></eltable>
+    <eltable :data="tableData" :columns="columns" />
   </template>
 
   <script>
@@ -1265,6 +1265,75 @@
 ```
 :::
 
+### 自定义表格头部
+
+可用于自定义表单组件。
+
+:::demo 通过 `Scoped slot` 可以获取到 `tableOption` 的数据，用法参考 demo。
+
+```html
+  <template>
+    <eltable 
+      :data="tableData" 
+      :option="tableOption"
+      :columns="columns">
+      <template #header="scope">
+        <el-tag>{{ scope.tableOption.title }}</el-tag>
+        <el-tag type="success">{{ scope.tableOption.title }}</el-tag>
+        <el-tag type="info">{{ scope.tableOption.title }}</el-tag>
+        <el-tag type="warning">{{ scope.tableOption.title }}</el-tag>
+        <el-tag type="danger">{{ scope.tableOption.title }}</el-tag>
+      </template>
+    </eltable>
+  </template>
+
+  <script>
+    export default {
+      data() {
+        return {
+          tableOption: {
+            title: '自定义表格头部标题'
+          },
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px'
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 250
+            },
+            {
+              label: '地址',
+              prop: 'address'
+            }
+          ],
+          tableData: [{
+            date: '2016-05-02',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          }, {
+            date: '2016-05-04',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1517 弄'
+          }, {
+            date: '2016-05-01',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1519 弄'
+          }, {
+            date: '2016-05-03',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1516 弄'
+          }]
+        }
+      }
+    }
+  </script>
+```
+:::
+
 ### Table Attributes
 
 | 参数 | 说明 | 类型 | 可选值 | 默认值 |
@@ -1303,6 +1372,7 @@
 
 | name | 说明 | 参数 |
 |------|-----|------|
+| header | 自定义表格头部 | { tableOption } |
 | 列的 prop | 自定义列的内容 | { row } |
 
 ### Page Attributes

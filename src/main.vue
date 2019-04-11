@@ -1,41 +1,53 @@
 <template>
   <div :class="b()">
     <el-card :class="b('box')">
-      <!-- 表格功能列 -->
-      <div :class="b('menu')">
-        <div :class="b('left')"></div>
-        <div :class="b('right')">
-          <el-input
-            placeholder="搜索列表"
-            size="small"
-            v-model="searchTerm"
-          >
-            <i slot="prefix" class="el-input__icon el-icon-search"></i>
-          </el-input>
-          <el-tooltip content="动态列" placement="top">
-            <el-button 
-              icon="el-icon-menu" 
+      <!-- 表格头部 -->
+      <div 
+        :class="b('header')"
+        slot="header"
+      >
+        <!-- 自定义表格头部 -->
+        <slot 
+          name="header"
+          :tableOption="option"
+        />
+        <!-- 表格功能列 -->
+        <div :class="b('menu')">
+          <div :class="b('left')"></div>
+          <div :class="b('right')">
+            <el-input
+              placeholder="搜索列表"
               size="small"
-              circle
-              @click="initColumnBox"
-            />
-          </el-tooltip>
-          <el-dropdown trigger="click" size="small">
-            <el-tooltip content="过滤器设置" placement="top">
+              v-model="searchTerm"
+            >
+              <i slot="prefix" class="el-input__icon el-icon-search"></i>
+            </el-input>
+            <el-tooltip content="动态列" placement="top">
               <el-button 
-                icon="el-icon-setting" 
+                icon="el-icon-menu" 
                 size="small"
                 circle
+                @click="initColumnBox"
               />
             </el-tooltip>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item>新建</el-dropdown-item>
-              <el-dropdown-item>编辑</el-dropdown-item>
-              <el-dropdown-item>删除</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
+            <el-dropdown trigger="click" size="small">
+              <el-tooltip content="过滤器设置" placement="top">
+                <el-button 
+                  icon="el-icon-setting" 
+                  size="small"
+                  circle
+                />
+              </el-tooltip>
+              <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item>新建</el-dropdown-item>
+                <el-dropdown-item>编辑</el-dropdown-item>
+                <el-dropdown-item>删除</el-dropdown-item>
+              </el-dropdown-menu>
+            </el-dropdown>
+          </div>
         </div>
       </div>
+      
       <!-- 表格主体 -->
       <el-table 
         ref="table"
@@ -120,8 +132,8 @@
         :data="flattenColumnList"
       />
       <span slot="footer">
-        <el-button size="medium" @click="columnBox = false;">取消</el-button>
         <el-button type="primary" size="medium" @click="setDynamicColumns">确定</el-button>
+        <el-button size="medium" @click="columnBox = false;">取消</el-button>
       </span>
     </el-dialog>
   </div>
@@ -354,7 +366,7 @@ export default {
     min-height: 40px;
     height: auto;
     overflow: hidden;
-    margin-bottom: 12px;
+    // margin-bottom: 12px;
   }
 
   &__left,
