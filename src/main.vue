@@ -79,7 +79,7 @@
         />
         <!-- 表格数据列 -->
         <column 
-          v-for="(column, index) in columns"
+          v-for="(column, index) in displayColumns"
           :key="index"
           :index="index"
           :column-option="column"
@@ -111,15 +111,17 @@
     <!-- 动态列 -->
     <el-dialog 
       title="动态列设置"
+      :custom-class="b('columnbox')"
       :visible.sync="columnBox">
       <el-transfer 
         v-model="visibleColumnKeys"
+        :class="b('columnbox--transfer')"
         :titles="['隐藏的列', '显示的列']"
         :data="flattenColumnList"
       />
       <span slot="footer">
-        <el-button>取消</el-button>
-        <el-button type="primary">确定</el-button>
+        <el-button size="medium" @click="columnBox = false;">取消</el-button>
+        <el-button type="primary" size="medium" @click="setDynamicColumns">确定</el-button>
       </span>
     </el-dialog>
   </div>
@@ -129,6 +131,7 @@
 import bem from './mixins/bem';
 import Column from './components/column';
 import { flattenArray } from './utils/utils';
+import cloneDeep from 'clone-deep';
 
 export default {
   name: 'Eltable',
@@ -191,6 +194,7 @@ export default {
       },
       tableSelect: [],
       searchTerm: '',
+      displayColumns: [],
       columnBox: false,
       flattenColumnList: [],
       visibleColumnKeys: []
@@ -223,14 +227,14 @@ export default {
 
   methods: {
     columnInit() {
-      this.flattenColumnList = flattenArray(this.columns, 'children')
+      this.displayColumns = cloneDeep(this.columns);
+      this.flattenColumnList = flattenArray(this.displayColumns, 'children')
         .map(column => {
           return {
             key: column.prop,
             label: column.label
           };
         });
-      this.visibleColumnKeys = this.flattenColumnList.map(column => column.key);
     },
 
     pageInit() {
@@ -243,6 +247,27 @@ export default {
         50,
         100
       ];
+    },
+
+    initColumnBox() {
+      this.visibleColumnKeys = flattenArray(this.displayColumns).map(column => column.prop);
+      this.columnBox = true;
+    },
+
+    setDynamicColumns() {
+      let displayColumns = cloneDeep(this.columns);
+      const visibleColumnKeys = this.visibleColumnKeys;
+      const keepColumn = (column) => visibleColumnKeys.indexOf(column.prop) !== -1;
+      const clean = (column) => {
+        if (column.children) {
+          column.children = column.children.filter(keepColumn);
+          column.children.forEach(clean);
+        }
+        return column;
+      };
+      displayColumns = displayColumns.map(clean).filter(keepColumn);
+      this.displayColumns = displayColumns;
+      this.columnBox = false;
     },
 
     sizeChange(val) {
@@ -315,9 +340,7 @@ export default {
       this.$emit('header-dragend', newWidth, oldWidth, column, event);
     },
 
-    initColumnBox() {
-      this.columnBox = true;
-    }
+    
   }
 };
 </script>
@@ -369,6 +392,21 @@ export default {
         position: absolute;
         right: 0;
     }
+  }
+}
+
+.el-dialog.eltable__columnbox {
+  .el-dialog__header {
+    text-align: center;
+  }
+
+  .el-dialog__body {
+    text-align: center;
+  }
+
+  .eltable__columnbox--transfer {
+    display: inline-block;
+    text-align: initial;
   }
 }
 </style>
