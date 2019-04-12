@@ -100,5 +100,12 @@ code {
   .success-row {
     background: #f0f9eb;
   }
+
+  .table-header-ellipsis > .cell {
+    white-space: nowrap;
+    min-width: 50px;
+  }
 }
+
+
 

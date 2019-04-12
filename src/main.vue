@@ -1,6 +1,11 @@
 <template>
   <div :class="b()">
-    <el-card :class="b('box')">
+    <el-card 
+      :class="b('box')"
+      :body-style="{
+        position: 'relative'
+      }"
+    >
       <!-- 表格头部 -->
       <div 
         :class="b('header')"
@@ -13,12 +18,29 @@
         />
         <!-- 表格功能列 -->
         <div :class="b('menu')">
-          <div :class="b('left')"></div>
+          <div :class="b('left')" v-if="hasListViews">
+            <el-select
+              :disabled="Boolean(editingListView)"
+              v-model="currentListView"
+              @change="listViewChange"
+              placeholder="请选择"
+            >
+              <el-option-group label="常用检索列表">
+                <el-option 
+                  v-for="listView in listViews"
+                  :key="listView.id"
+                  :label="listView.name"
+                  :value="listView"
+                />
+              </el-option-group>
+            </el-select>
+          </div>
           <div :class="b('right')">
             <el-input
               placeholder="搜索列表"
               size="small"
-              v-model="searchTerm"
+              v-model.trim="searchTerm"
+              @keyup.enter.native="searchChange"
             >
               <i slot="prefix" class="el-input__icon el-icon-search"></i>
             </el-input>
@@ -30,8 +52,13 @@
                 @click="initColumnBox"
               />
             </el-tooltip>
-            <el-dropdown trigger="click" size="small">
-              <el-tooltip content="检索设置" placement="top">
+            <el-dropdown 
+              v-if="hasListViews"
+              trigger="click" 
+              size="small" 
+              @command="listViewSetting"
+            >
+              <el-tooltip content="常用检索设置" placement="top">
                 <el-button 
                   icon="el-icon-setting" 
                   size="small"
@@ -39,9 +66,13 @@
                 />
               </el-tooltip>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item>新建</el-dropdown-item>
-                <el-dropdown-item>编辑</el-dropdown-item>
-                <el-dropdown-item>删除</el-dropdown-item>
+                <el-dropdown-item command="new">新增</el-dropdown-item>
+                <el-dropdown-item command="edit">修改</el-dropdown-item>
+                <el-dropdown-item 
+                  command="delete"
+                  :disabled="!currentListView.deletable">
+                  删除
+                </el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </div>
@@ -117,6 +148,37 @@
           @current-change="pageChange"
         />
       </div>
+
+      <!-- 常用检索设置面板 -->
+      <slide-x-right-transition>
+        <el-card 
+          v-if="editingListView && showListViewPanel"
+          :class="b('filters--panel')"
+        >
+          <div slot="header">
+            <span>{{ editingListView.name }}</span>
+            <i class="el-icon-back close-btn" @click="closeListViewPanel"></i>
+          </div>
+          <slide-y-up-transition
+            v-if="editingListView.conditions.length"
+            tag="ul"
+            class="condition-list"
+            group
+          >
+            <condition
+              v-for="condition in editingListView.conditions"
+              :key="condition.id"
+              :condition="condition"
+              @delete="conditionDelete"
+            />
+          </slide-y-up-transition>
+          <span v-else>暂时没有条件</span>
+          <div class="filter-condition-btn">
+            <el-button type="text" class="add" @click="addCondition">新增条件</el-button>
+            <el-button type="text" class="clear" @click="removeConditions">清空条件</el-button>
+          </div>
+        </el-card>
+      </slide-x-right-transition>
     </el-card>
 
     <!-- 动态列 -->
@@ -141,14 +203,19 @@
 <script>
 import bem from './mixins/bem';
 import Column from './components/column';
-import { flattenArray } from './utils/utils';
+import Condition from './components/condition';
+import { flattenArray, guid } from './utils/utils';
 import cloneDeep from 'clone-deep';
+import { SlideXRightTransition, SlideYUpTransition } from 'vue2-transitions'
 
 export default {
   name: 'Eltable',
 
   components: {
-    Column
+    Column,
+    Condition,
+    SlideYUpTransition,
+    SlideXRightTransition
   },
 
   mixins: [bem],
@@ -192,6 +259,13 @@ export default {
     headerCellClassName: {
       type: Function,
       default: null
+    },
+
+    listViews: {
+      type: Array,
+      default() {
+        return [];
+      }
     }
   },
 
@@ -203,6 +277,9 @@ export default {
         pageSize: -1,
         pageSizes: []
       },
+      showListViewPanel: false,
+      currentListView: null,
+      editingListView: null,
       tableSelect: [],
       searchTerm: '',
       displayColumns: [],
@@ -213,6 +290,9 @@ export default {
   },
 
   computed: {
+    hasListViews() {
+      return Boolean(this.listViews.length);
+    }
   },
 
   watch: {
@@ -232,11 +312,18 @@ export default {
   },
 
   created() {
+    this.listViewInit();
     this.columnInit();
     this.pageInit();
   },
 
   methods: {
+    listViewInit() {
+      if (this.hasListViews) {
+        this.currentListView = this.listViews[0];
+      }
+    },
+
     columnInit() {
       this.displayColumns = cloneDeep(this.columns);
       this.flattenColumnList = flattenArray(this.displayColumns, 'children')
@@ -282,6 +369,42 @@ export default {
       };
       this.displayColumns = traverseColumn(this.columns);
       this.columnBox = false;
+    },
+
+    listViewSetting(command) {
+      switch (command) {
+        case 'edit':
+        this.initFilterPanel();
+        break;
+      }
+    },
+
+    initFilterPanel() {
+      if (!this.currentListView) {
+        return;
+      }
+      this.editingListView = cloneDeep(this.currentListView);
+      this.showListViewPanel = true;
+    },
+
+    closeListViewPanel() {
+      this.showListViewPanel = false;
+      this.editingListView = null;
+    },
+
+    conditionDelete({ id, field, operator, value }) {
+      const index = this.editingListView.conditions.map(cond => cond.id).indexOf(id);
+      if (index >= 0) {
+        this.editingListView.conditions.splice(index, 1);
+      }
+    },
+
+    addCondition() {
+      this.editingListView.conditions.push({ id: guid() });
+    },
+
+    removeConditions() {
+      this.editingListView.conditions = [];
     },
 
     sizeChange(val) {
@@ -342,6 +465,14 @@ export default {
       this.$emit('filter-change', filters);
     },
 
+    searchChange() {
+      this.$emit('search-change', this.searchTerm, this.currentListView);
+    },
+
+    listViewChange(listView) {
+      this.$emit('list-view-change', this.searchTerm, listView);
+    },
+
     cellMouseEnter(row, column, cell, event) {
       this.$emit('cell-mouse-enter', row, column, cell, event);
     },
@@ -352,9 +483,7 @@ export default {
 
     headerDragend(newWidth, oldWidth, column, event) {
       this.$emit('header-dragend', newWidth, oldWidth, column, event);
-    },
-
-    
+    }
   }
 };
 </script>
@@ -368,7 +497,6 @@ export default {
     min-height: 40px;
     height: auto;
     overflow: hidden;
-    // margin-bottom: 12px;
   }
 
   &__left,
@@ -405,6 +533,55 @@ export default {
     .el-pagination {
         position: absolute;
         right: 0;
+    }
+  }
+
+  &__filters--panel {
+    position: absolute;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: 320px;
+    z-index: 2;
+
+    .el-card__header {
+      position: relative;
+      height: 60px;
+    }
+
+    .el-card__body {
+      height: calc(100% - 100px);
+      overflow: auto;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 50%;
+      right: 24px;
+      transform: translateY(-50%) rotateZ(180deg);
+      cursor: pointer;
+    }
+
+    .filter-condition-btn {
+      position: relative;
+      height: 60px;
+
+      .el-button {
+        position: absolute;
+      }
+
+      .add {
+        left: 0;
+      }
+
+      .clear {
+        right: 0;
+      }
+    }
+
+    .condition-list {
+      padding-left: 0;
+      margin: 0;
     }
   }
 }

@@ -127,6 +127,7 @@
       :data="tableData" 
       :columns="columns"
       :option="tableOption"
+      :header-cell-class-name="headerCellClassName"
       @header-dragend="headerDragend"
     />
   </template>
@@ -175,6 +176,9 @@
       },
 
       methods: {
+        headerCellClassName() {
+          return 'table-header-ellipsis';
+        },
         headerDragend(newWidth, oldWidth, column, event) {
           this.$message.success(`newWidth: ${newWidth}, oldWidth: ${oldWidth}`);
         }
@@ -1336,6 +1340,81 @@
 ```
 :::
 
+### 常用检索列表
+
+基础的表格展示用法。
+
+:::demo 传入 `list-views` 常用检索列表启用该功能。
+
+```html
+  <template>
+    <eltable 
+      :data="tableData"
+      :columns="columns"
+      :list-views="listViews"
+    />
+  </template>
+
+  <script>
+    export default {
+      data() {
+        return {
+          listViews: [
+            {
+              id: '0001',
+              name: '所有数据',
+              deletable: false,
+              conditions: [
+                {
+                  id: 'conditionId2333',
+                  field: 'column1',
+                  operator: 'eq',
+                  value: '233'
+                }
+              ]
+            }
+          ],
+          columns: [
+            {
+              label: '日期',
+              prop: 'date',
+              width: '300px'
+            },
+            {
+              label: '姓名',
+              prop: 'name',
+              width: 250
+            },
+            {
+              label: '地址',
+              prop: 'address'
+            }
+          ],
+          tableData: [{
+            date: '2016-05-02',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1518 弄'
+          }, {
+            date: '2016-05-04',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1517 弄'
+          }, {
+            date: '2016-05-01',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1519 弄'
+          }, {
+            date: '2016-05-03',
+            name: '王小虎',
+            address: '上海市普陀区金沙江路 1516 弄'
+          }]
+        }
+      }
+    }
+  </script>
+```
+:::
+
+
 ### Table Attributes
 
 | 参数 | 说明 | 类型 | 可选值 | 默认值 |
@@ -1358,6 +1437,8 @@
 | filter-change | 当表格的筛选条件发生变化的时候会触发该事件，参数的值是一个对象，对象的 key 是 column 的 columnKey，对应的 value 为用户选择的筛选条件的数组 | filters |
 | size-change | pageSize 改变时会触发 | { currentPage, pageSize, pageSizes, total } |
 | page-change | currentPage 改变时会触发 | { currentPage, pageSize, pageSizes, total } |
+| search-change | 搜索框 enter 触发 | searchTerm, listView |
+| list-view-change | listView 改变时触发 | searchTerm, listView |
 
 ### Table Methods
 

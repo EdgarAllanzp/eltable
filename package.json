@@ -50,6 +50,7 @@
     "clone-deep": "^4.0.1",
     "dayjs": "^1.8.12",
     "element-ui": "^2.7.0",
-    "vue": "^2.6.10"
+    "vue": "^2.6.10",
+    "vue2-transitions": "^0.3.0"
   }
 }
