@@ -31,7 +31,7 @@
               />
             </el-tooltip>
             <el-dropdown trigger="click" size="small">
-              <el-tooltip content="过滤器设置" placement="top">
+              <el-tooltip content="检索设置" placement="top">
                 <el-button 
                   icon="el-icon-setting" 
                   size="small"
@@ -91,9 +91,8 @@
         />
         <!-- 表格数据列 -->
         <column 
-          v-for="(column, index) in displayColumns"
-          :key="index"
-          :index="index"
+          v-for="column in displayColumns"
+          :key="column.prop"
           :column-option="column"
         >
           <template #[column.prop]="scope">
@@ -262,23 +261,26 @@ export default {
     },
 
     initColumnBox() {
-      this.visibleColumnKeys = flattenArray(this.displayColumns).map(column => column.prop);
+      this.visibleColumnKeys = flattenArray(this.displayColumns, 'children').map(column => column.prop);
       this.columnBox = true;
     },
 
     setDynamicColumns() {
-      let displayColumns = cloneDeep(this.columns);
       const visibleColumnKeys = this.visibleColumnKeys;
-      const keepColumn = (column) => visibleColumnKeys.indexOf(column.prop) !== -1;
-      const clean = (column) => {
-        if (column.children) {
-          column.children = column.children.filter(keepColumn);
-          column.children.forEach(clean);
-        }
-        return column;
+      const traverseColumn = columns => {
+        const cloneColumns = [];
+        columns.forEach(col => {
+          if (visibleColumnKeys.indexOf(col.prop) !== -1) {
+            const newColumn = { ...col };
+            if (col.children && col.children.length) {
+              this.$set(newColumn, 'children', traverseColumn(col.children));
+            }
+            cloneColumns.push(newColumn);
+          }
+        });
+        return cloneColumns;
       };
-      displayColumns = displayColumns.map(clean).filter(keepColumn);
-      this.displayColumns = displayColumns;
+      this.displayColumns = traverseColumn(this.columns);
       this.columnBox = false;
     },
 

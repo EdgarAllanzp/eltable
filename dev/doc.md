@@ -721,6 +721,7 @@
             },
             {
               label: '配送信息',
+              prop: 'logistics',
               children: [
                 {
                   label: '姓名',
@@ -729,6 +730,7 @@
                 },
                 {
                   label: '地址',
+                  prop: 'details',
                   children: [
                     {
                       label: '省份',

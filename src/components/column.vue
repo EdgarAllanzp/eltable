@@ -15,8 +15,8 @@
     show-overflow-tooltip
   >
     <column 
-      v-for="(option, index) in recursiveColumns"
-      :key="index"
+      v-for="option in recursiveColumns"
+      :key="option.prop"
       :column-option="option"
     />
     <template #default="scope">
@@ -40,11 +40,6 @@ export default {
   name: 'Column',
 
   props: {
-    index: {
-      type: Number,
-      default: -1
-    },
-
     columnOption: {
       type: Object,
       default() {
